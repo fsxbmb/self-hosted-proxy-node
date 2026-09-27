@@ -18,6 +18,35 @@ Do not use it to access infrastructure without authorization, create an open rel
 - Make external mutations in stages: prepare and inspect, apply one change, verify, then continue. Confirm exact targets immediately before destructive actions such as deleting a node, revoking credentials, stopping a server, or replacing a subscription.
 - Do not claim that a node is working merely because the panel is reachable. Test SSH, panel health, node handshake, actual exit IP, DNS behavior, client import, routing, and rollback.
 
+## Input contract
+
+Before mutating infrastructure, collect these minimum inputs:
+
+- authorization and exact server identity: provider, server name or ID, region, OS, and public IPv4/IPv6;
+- access method: provider console or SSH account plus a local key path; never request or commit private-key contents;
+- desired node/client shape: protocol, domain/TLS/SNI status, required ports, and Clash/Mihomo or other client targets;
+- egress mode: none for VPS-only exit, or an authenticated HTTP/SOCKS5/provider-specific upstream for residential egress;
+- routing intent: private/LAN direct ranges, domestic direct policy, overseas/AI services that must use the proxy, and any migration/rollback requirement.
+
+A safe request can use this shape:
+
+~~~text
+Use $self-hosted-proxy-node for an authorized server.
+provider: <provider>
+server: <name or ID>
+region: <region>
+os: <distribution and version>
+ssh_account: <account>
+ssh_key_path: <local path, or provider console>
+node: <protocol and TLS/domain requirements>
+upstream_egress: none | authenticated HTTP | SOCKS5 | provider-specific
+client_targets: <Clash Verge / mobile Mihomo / other>
+rules: <private direct, domestic direct, named overseas/AI services>
+rollback: <keep old node / replace after testing / other>
+~~~
+
+If the user supplies only an IP and password, do not infer that access is safe or authorized. Prefer a provider console or key-backed access, and ask for the missing ownership, OS, account, and egress details before changing the server. Upstream credentials may be supplied through a protected secret mechanism at execution time, but never in a public skill repository.
+
 ## Standard workflow
 
 1. **Build a deployment manifest.** Collect provider/server identity, OS, address family, SSH access method, desired panel and node protocol, domain/TLS status, upstream residential proxy details, client formats, rule requirements, and whether the old node must remain available during migration. Use safe placeholders for secrets.
