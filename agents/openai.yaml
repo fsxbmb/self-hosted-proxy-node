@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self-hosted Proxy Node"
+  short_description: "Deploy and harden a self-hosted proxy node"
+  default_prompt: "Use $self-hosted-proxy-node to deploy and validate an authorized self-hosted proxy node."
